@@ -1,0 +1,322 @@
+/* contact.css */
+:root {
+    --primary: #0f172a;      /* Navy */
+    --accent: #f59e0b;       /* Gold */
+    --accent-hover: #d97706;
+    --bg-light: #f8fafc;
+    --white: #ffffff;
+    --text-dark: #1e293b;
+    --text-gray: #64748b;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* HEADER STYLE */
+.contact-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+    color: white;
+    text-align: center;
+    padding: 120px 20px 60px;
+    margin-bottom: 40px;
+}
+
+.contact-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.contact-header p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* LAYOUT GRID */
+.contact-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* INFO CARD */
+.info-card {
+    background: var(--primary);
+    color: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+}
+
+.info-card h2 {
+    color: var(--accent);
+    margin-bottom: 5px;
+}
+
+.info-card .subtitle {
+    color: #94a3b8;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.info-item h4 {
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.info-item p {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.social-links {
+    margin-top: 40px;
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: 0.3s;
+    font-size: 1.2rem;
+}
+
+.social-links a:hover {
+    background: var(--accent);
+    color: var(--primary);
+    transform: translateY(-3px);
+}
+
+/* FORM CARD */
+.form-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.form-card h2 {
+    color: var(--primary);
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: 0.3s;
+    background: #f8fafc;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.submit-btn:hover {
+    background: var(--accent-hover);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* MAP */
+.map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ... Your existing CSS ... */
+
+/* === FAQ SECTION === */
+.faq-section {
+    max-width: 800px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+}
+
+.faq-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary);
+}
+
+.faq-item {
+    background: white;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.faq-item summary {
+    padding: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary);
+    list-style: none; /* Hide default triangle */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.faq-item summary:hover {
+    background: #f1f5f9;
+}
+
+.faq-item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.faq-item[open] summary::after {
+    content: '-';
+}
+
+.faq-item p {
+    padding: 0 20px 20px;
+    color: var(--text-gray);
+    line-height: 1.6;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 10px; /* Small spacing after line */
+}
+
+/* === PUBLIC FEEDBACK SECTION === */
+.feedback-section {
+    background-color: var(--primary);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.feedback-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feedback-container h2 {
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.feedback-container p {
+    color: #cbd5e1;
+    margin-bottom: 30px;
+}
+
+/* Reusing form styles but adjusting for dark background */
+.feedback-form .form-group label {
+    color: #e2e8f0;
+    text-align: left;
+}
+
+.feedback-form input, 
+.feedback-form textarea {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.feedback-form input:focus, 
+.feedback-form textarea:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--accent);
+    color: white;
+}
+@media (max-width: 480px) {
+    .contact-header {
+        padding: 100px 20px 40px;
+    }
+    .contact-header h1 {
+        font-size: 2rem;
+    }
+    .info-item {
+        flex-direction: column;
+    }
+}

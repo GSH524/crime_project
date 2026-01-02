@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login - Crime Analytics</title>
+  <link rel="stylesheet" href="login.css">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* Specific style for the password toggle icon */
+    .password-toggle {
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
+        z-index: 10; /* Ensure it stays on top of the input */
+        padding: 10px;
+    }
+    .password-toggle:hover {
+        color: #f59e0b; /* Gold on hover */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="login-card p-4 p-md-5">
+      
+      <div class="text-center mb-4">
+        <i class="bi bi-shield-lock-fill text-warning fs-1 mb-2"></i>
+        <h2 class="text-warning fw-bold">Welcome Back</h2>
+        <p class="text-light-50">Secure Access Portal</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)">
+        
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+          <label for="loginEmail">Email Address</label>
+        </div>
+
+        <div class="form-floating mb-4 position-relative">
+          <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+          <label for="loginPassword">Password</label>
+          
+          <span class="position-absolute top-50 end-0 translate-middle-y me-2 password-toggle" onclick="togglePassword()">
+            <i class="bi bi-eye" id="toggleIcon"></i>
+          </span>
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100 py-3 fw-bold shadow-sm">LOGIN</button>
+        
+        <div class="text-center mt-4">
+          <p class="text-light-50 mb-0">New Officer or User?</p>
+          <a href="signup.html" class="text-warning text-decoration-none fw-bold">Create an Account</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('loginPassword');
+        const icon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+  </script>
+
+  <script type="module">
+    import { auth, signInWithEmailAndPassword, db, getDoc, doc } from "./firebase.js";
+
+    window.handleLogin = async function(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const adminEmail = "gudipatisrihari7@gmail.com";
+
+        const btn = event.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        btn.innerText = "Authenticating...";
+        btn.disabled = true;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            let role = "user"; 
+
+            // 1. Check Specific Admin Email First
+            if (email.toLowerCase() === adminEmail.toLowerCase()) {
+                role = "admin";
+            } 
+            else {
+                // 2. Fallback to Database Role
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        role = userDoc.data().role || "user";
+                    }
+                } catch (e) {
+                    console.log("Error checking role, defaulting to user.");
+                }
+            }
+
+            // Save Session
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("role", role); 
+
+            // Redirect
+            if (role === "admin") {
+                window.location.href = "admindashboard.html";
+            } else {
+                window.location.href = "userdashboard.html";
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Login Failed: " + error.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+  </script>
+
+</body>
+</html>

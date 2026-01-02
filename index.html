@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crime Analytics | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Specific styles for the read-only contact section on Home */
+        .contact-read-only {
+            background-color: #f8fafc;
+            text-align: center;
+            padding-bottom: 60px;
+        }
+        .contact-info-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .contact-item {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 300px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .contact-item i {
+            font-size: 2rem;
+            color: #f59e0b; /* Gold */
+            margin-bottom: 15px;
+        }
+        .contact-item h4 {
+            color: #0f172a; /* Navy */
+            margin-bottom: 10px;
+        }
+        .contact-item p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><img src="logo4.png" alt="Logo"><span>Crime Analytics</span></div>
+        <button class="hamburger" id="hamburgerBtn"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            
+            <a href="userdashboard.html" id="navUserDashboard" style="display:none; color: #f59e0b; font-weight: bold;">Dashboard</a>
+            <a href="admindashboard.html" id="adminDashboardLink" style="display:none; color: #f59e0b; font-weight: bold;">Admin</a>
+
+            <button id="logoutBtn" onclick="window.logout()" style="display:none;">Logout</button>
+            <a href="login.html" id="loginBtn">Login</a>
+            <a href="signup.html" id="signupBtn">Signup</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Safety Through Data</h1>
+        <p>Advanced crime rate analysis for safer communities. Transforming raw data into actionable intelligence.</p>
+    </section>
+
+    <div class="stats">
+        <div class="stat-box"><h2>12k+</h2><p>Crimes Analyzed</p></div>
+        <div class="stat-box"><h2>100%</h2><p>Secure Data</p></div>
+        <div class="stat-box"><h2>24/7</h2><p>Monitoring</p></div>
+    </div>
+
+    <section id="features" class="content-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Tools for Public Safety</h2>
+                <p>Our platform provides comprehensive tools for law enforcement and citizens.</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <h3>Trend Analysis</h3>
+                    <p>Visualize crime trends over specific timeframes to identify rising or falling patterns in activity.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <h3>Hotspot Mapping</h3>
+                    <p>Pinpoint high-risk areas using geospatial data to optimize patrol routes and resource allocation.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <h3>Secure Reporting</h3>
+                    <p>A fully encrypted channel for citizens and officers to report incidents without compromising privacy.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <h3>Real-time Alerts</h3>
+                    <p>Receive instant notifications about critical incidents in your designated jurisdiction.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section alt-bg">
+        <div class="container split-layout">
+            <div class="text-block">
+                <h2>Moving from Reactive to Proactive</h2>
+                <p>Traditional policing often relies on responding to incidents after they happen. Our data-driven approach helps authorities anticipate potential issues before they escalate.</p>
+                <ul class="check-list">
+                    <li><i class="bi bi-check-circle-fill"></i> Historical Data Correlation</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Predictive Modeling</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Community Engagement Metrics</li>
+                </ul>
+            </div>
+            <div class="image-block">
+                <i class="bi bi-bar-chart-steps" style="font-size: 150px; color: #1e293b; opacity: 0.8;"></i>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+            </div>
+            <div class="steps-wrapper">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>Data Collection</h3>
+                    <p>Aggregating reports from police stations and citizen inputs.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>Processing</h3>
+                    <p>Cleaning and categorizing data using our analytical engine.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>Visualization</h3>
+                    <p>Displaying insights on interactive user and admin dashboards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section contact-read-only">
+        <div class="container">
+            <div class="section-title">
+                <h2>Contact Information</h2>
+                <p>Reach out to our support team for inquiries.</p>
+            </div>
+
+            <div class="contact-info-grid">
+                <div class="contact-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <h4>Headquarters</h4>
+                    <p>123 Public Safety Drive</p>
+                    <p>Hyderabad, Telangana 500081</p>
+                </div>
+
+                <div class="contact-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <h4>Email Support</h4>
+                    <p>support@crimesafetyanalysis.in</p>
+                    <p>media@crimesafetyanalysis.in</p>
+                </div>
+
+                <div class="contact-item">
+                    <i class="bi bi-telephone-fill"></i>
+                    <h4>Phone Support</h4>
+                    <p>+91 90000 12345</p>
+                    <p>Mon-Fri, 9:00 AM - 5:00 PM</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>© 2025 Crime Analytics & Public Safety</footer>
+
+    <script>
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+    </script>
+    
+    <script type="module">
+        import { auth, signOut, onAuthStateChanged, db, getDoc, doc } from './firebase.js';
+
+        // ✅ Define Admin Email
+        const adminEmail = "gudipatisrihari7@gmail.com"; 
+
+        // GLOBAL AUTH LISTENER
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById("loginBtn");
+            const signupBtn = document.getElementById("signupBtn");
+            const logoutBtn = document.getElementById("logoutBtn");
+            // Get the two specific dashboard links
+            const userDash = document.getElementById("navUserDashboard");
+            const adminDash = document.getElementById("adminDashboardLink");
+
+            if (user) {
+                // Logged In
+                if(loginBtn) loginBtn.style.display = "none";
+                if(signupBtn) signupBtn.style.display = "none";
+                if(logoutBtn) logoutBtn.style.display = "inline-block";
+                
+                // ✅ 1. PRIORITY CHECK: Is current user the specific admin?
+                if (user.email && user.email.toLowerCase() === adminEmail.toLowerCase()) {
+                    if(adminDash) adminDash.style.display = "inline-block";
+                    if(userDash) userDash.style.display = "none";
+                    return; // Stop execution here, found the admin
+                }
+
+                // 2. Normal DB Role Check for others
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists() && snap.data().role === "admin") {
+                        if(adminDash) adminDash.style.display = "inline-block";
+                        if(userDash) userDash.style.display = "none";
+                    } else {
+                        if(userDash) userDash.style.display = "inline-block";
+                        if(adminDash) adminDash.style.display = "none";
+                    }
+                } catch(e) { console.error(e); }
+            } else {
+                // Logged Out
+                if(loginBtn) loginBtn.style.display = "inline-block";
+                if(signupBtn) signupBtn.style.display = "inline-block";
+                if(logoutBtn) logoutBtn.style.display = "none";
+                if(userDash) userDash.style.display = "none";
+                if(adminDash) adminDash.style.display = "none";
+            }
+        });
+
+        window.logout = async () => {
+            await signOut(auth);
+            localStorage.clear();
+            window.location.href = "index.html";
+        };
+    </script>
+</body>
+</html>

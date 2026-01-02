@@ -1,0 +1,64 @@
+/* GLOBAL SETTINGS */
+body {
+  background: linear-gradient(135deg, #051626 0%, #0a2e4d 100%); /* Deep Navy Gradient */
+  color: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* CARD STYLING */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(12, 33, 56, 0.7); /* Glassy Navy */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* INPUTS */
+.form-floating > .form-control {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 10px;
+}
+
+.form-floating > .form-control:focus {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+  border-color: #f59e0b;
+}
+
+.form-floating > label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #f59e0b; /* Gold Label on focus */
+}
+
+/* BUTTONS */
+.btn-warning {
+  background-color: #f59e0b;
+  border: none;
+  color: #051626;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+  background-color: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+}
+
+.text-light-50 {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}

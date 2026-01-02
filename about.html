@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About Us | Crime Analytics</title>
+    <link rel="shortcut icon" href="crime-investigation.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="index.css"> 
+    <link rel="stylesheet" href="about.css"> 
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="logo4.png" alt="Logo">
+            <span>Crime Analytics</span>
+        </div>
+
+        <button class="hamburger" id="hamburgerBtn">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="about.html" class="active">About</a> 
+            <a href="contact.html">Contact</a>
+            
+            <a href="userdashboard.html" id="navUserDashboard" style="display:none; color: #f59e0b; font-weight: bold;">Dashboard</a>
+            <a href="admindashboard.html" id="adminDashboardLink" style="display:none; color: #f59e0b; font-weight: bold;">Admin Dashboard</a>
+            
+            <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+            <a href="login.html" id="loginBtn">Login</a>
+            <a href="signup.html" id="signupBtn" class="btn-gold">Signup</a>
+        </div>
+    </nav>
+
+    <header class="about-hero">
+        <div class="container">
+            <h1>Who We Are</h1>
+            <p>Bridging the gap between raw data and public safety through advanced analytics.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <div class="about-nav">
+            <button onclick="showTab('overview')" class="tab-btn active" id="btn-overview">Overview</button>
+            <button onclick="showTab('mission')" class="tab-btn" id="btn-mission">Mission & Vision</button>
+            <button onclick="showTab('tech')" class="tab-btn" id="btn-tech">Technology</button>
+        </div>
+
+        <div id="overview" class="about-content active">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2>Transforming Data into Safety</h2>
+                    <p>
+                        The <strong>Crime Rate Analysis & Public Safety Platform</strong> is a state-of-the-art system designed to help law enforcement agencies, policy makers, and citizens understand crime dynamics.
+                    </p>
+                    <p>
+                        By aggregating data from multiple sources and applying statistical models, we turn historical records into actionable intelligence. Our goal is to shift the focus from reactive policing to proactive crime prevention.
+                    </p>
+                </div>
+                <div class="image-section">
+                    <i class="bi bi-shield-check" style="font-size: 8rem; color: #f59e0b; opacity: 0.2;"></i>
+                </div>
+            </div>
+
+            <div class="grid-cards">
+                <div class="card">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <h3>Trend Analysis</h3>
+                    <p>Visualizing crime spikes over time to allocate resources effectively.</p>
+                </div>
+                <div class="card">
+                    <i class="bi bi-geo-alt"></i>
+                    <h3>Hotspot Mapping</h3>
+                    <p>Identifying high-risk zones using geospatial data processing.</p>
+                </div>
+                <div class="card">
+                    <i class="bi bi-people"></i>
+                    <h3>Citizen Awareness</h3>
+                    <p>Empowering the public with transparent safety data.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="mission" class="about-content">
+            <div class="mission-box">
+                <div class="mission-header">
+                    <h2>Our Mission</h2>
+                    <p>To empower government bodies and citizens with reliable intelligence that enables safer communities.</p>
+                </div>
+                
+                <div class="values-grid">
+                    <div class="value-item">
+                        <div class="icon-circle"><i class="bi bi-eye"></i></div>
+                        <h4>Transparency</h4>
+                        <p>Open access to non-sensitive crime statistics for public awareness.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="icon-circle"><i class="bi bi-bullseye"></i></div>
+                        <h4>Accuracy</h4>
+                        <p>Ensuring data integrity through rigorous validation processes.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="icon-circle"><i class="bi bi-shield-lock"></i></div>
+                        <h4>Privacy</h4>
+                        <p>Protecting the identities of victims while analyzing trends.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="icon-circle"><i class="bi bi-lightbulb"></i></div>
+                        <h4>Innovation</h4>
+                        <p>Constantly evolving our algorithms to predict new patterns.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tech" class="about-content">
+            <div class="tech-container">
+                <h2>Our Technology Stack</h2>
+                <p class="tech-intro">Built with modern, scalable, and secure technologies to handle complex data sets.</p>
+
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h3>Frontend</h3>
+                        <ul>
+                            <li><i class="bi bi-check2-circle"></i> HTML5 & CSS3</li>
+                            <li><i class="bi bi-check2-circle"></i> JavaScript (ES6+)</li>
+                            <li><i class="bi bi-check2-circle"></i> Chart.js for Visualization</li>
+                            <li><i class="bi bi-check2-circle"></i> Responsive Design</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>Backend & Data</h3>
+                        <ul>
+                            <li><i class="bi bi-check2-circle"></i> Google Firebase</li>
+                            <li><i class="bi bi-check2-circle"></i> Firestore (NoSQL Database)</li>
+                            <li><i class="bi bi-check2-circle"></i> Firebase Authentication</li>
+                            <li><i class="bi bi-check2-circle"></i> Secure API Endpoints</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>Data Sources</h3>
+                        <ul>
+                            <li><i class="bi bi-database"></i> National Crime Records Bureau (NCRB)</li>
+                            <li><i class="bi bi-database"></i> State Police Reports</li>
+                            <li><i class="bi bi-database"></i> Open Gov Data Portals</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        © 2025 Crime Rate Analysis & Public Safety
+    </footer>
+
+    <script>
+        // Navbar Toggle
+        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Tab Switching Logic
+        function showTab(tabId) {
+            document.querySelectorAll('.about-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3gQMnJh0L8Bc6CNRJ_oTh6xqabVP2-P4",
+            authDomain: "crime-rate-anaylsis.firebaseapp.com",
+            projectId: "crime-rate-anaylsis",
+            storageBucket: "crime-rate-anaylsis.firebasestorage.app",
+            messagingSenderId: "640438558864",
+            appId: "1:640438558864:web:42745954d83ea46cecf815"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const adminEmail = "gudipatisrihari7@gmail.com"; // ✅ Specific Admin Email
+
+        window.logout = async function () {
+            await signOut(auth);
+            localStorage.clear();
+            window.location.href = "login.html";
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById("loginBtn");
+            const signupBtn = document.getElementById("signupBtn");
+            const logoutBtn = document.getElementById("logoutBtn");
+            const userDash = document.getElementById("navUserDashboard");
+            const adminDash = document.getElementById("adminDashboardLink");
+
+            if (!user) {
+                // Not Logged In
+                loginBtn.style.display = "inline-block";
+                signupBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
+                userDash.style.display = "none";
+                adminDash.style.display = "none";
+            } else {
+                // Logged In
+                loginBtn.style.display = "none";
+                signupBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+                
+                // ✅ PRIORITY CHECK: Is current user the specific admin?
+                if (user.email && user.email.toLowerCase() === adminEmail.toLowerCase()) {
+                    adminDash.style.display = "inline-block";
+                    userDash.style.display = "none";
+                    return; // Stop execution here, we found the admin
+                }
+
+                // Normal DB Role Check for others
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists() && snap.data().role === "admin") {
+                        adminDash.style.display = "inline-block";
+                    } else {
+                        userDash.style.display = "inline-block";
+                    }
+                } catch(e) { console.log(e); }
+            }
+        });
+    </script>
+</body>
+</html>
