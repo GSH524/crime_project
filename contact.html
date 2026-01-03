@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <link rel="stylesheet" href="index.css">
@@ -45,7 +45,7 @@
     <header class="contact-header">
         <div class="container">
             <h1>Get in Touch</h1>
-            <p>Have questions about crime data or need to report an issue? We're here to help.</p>
+            <p>We are dedicated to data transparency. Have questions about crime statistics or need to report a technical issue? We are here to help.</p>
         </div>
     </header>
 
@@ -53,32 +53,34 @@
         <div class="contact-grid">
             
             <div class="info-card">
-                <h2>Contact Information</h2>
-                <p class="subtitle">Reach out to our support team directly.</p>
-                
-                <div class="info-item">
-                    <i class="bi bi-geo-alt-fill"></i>
-                    <div>
-                        <h4>Headquarters</h4>
-                        <p>123 Public Safety Drive,<br>Hyderabad, Telangana 500081</p>
+                <div>
+                    <h2>Contact Information</h2>
+                    <p class="subtitle">Reach out to our support team directly.</p>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <h4>Headquarters</h4>
+                            <p>123 Public Safety Drive,<br>Hyderabad, Telangana 500081</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="info-item">
-                    <i class="bi bi-envelope-fill"></i>
-                    <div>
-                        <h4>Email Us</h4>
-                        <p>support@crimesafetyanalysis.in</p>
-                        <p>media@crimesafetyanalysis.in</p>
+                    <div class="info-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <div>
+                            <h4>Email Us</h4>
+                            <p>support@crimesafetyanalysis.in</p>
+                            <p>media@crimesafetyanalysis.in</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="info-item">
-                    <i class="bi bi-telephone-fill"></i>
-                    <div>
-                        <h4>Call Us</h4>
-                        <p>+91 90000 12345</p>
-                        <p>+91 40 2345 6789</p>
+                    <div class="info-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div>
+                            <h4>Call Us</h4>
+                            <p>+91 90000 12345</p>
+                            <p>+91 40 2345 6789</p>
+                        </div>
                     </div>
                 </div>
 
@@ -86,6 +88,7 @@
                     <a href="#"><i class="bi bi-twitter-x"></i></a>
                     <a href="#"><i class="bi bi-linkedin"></i></a>
                     <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
                 </div>
             </div>
 
@@ -94,12 +97,12 @@
                 <form onsubmit="submitForm(event)">
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" id="name" placeholder="John Doe" required>
+                        <input type="text" id="name" placeholder="Enter your full name" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="john@example.com" required>
+                        <input type="email" id="email" placeholder="name@example.com" required>
                     </div>
 
                     <div class="form-group">
@@ -118,201 +121,128 @@
                         <textarea id="message" rows="5" placeholder="How can we help you?" required></textarea>
                     </div>
 
-                    <button type="submit" class="submit-btn">Send Message <i class="bi bi-send-fill"></i></button>
+                    <button type="submit" class="submit-btn">
+                        Send Message <i class="bi bi-send-fill"></i>
+                    </button>
                 </form>
             </div>
-
         </div>
 
         <div class="map-container">
             <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.463866299166!2d78.385!3d17.435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDI2JzA2LjAiTiA3OMKwMjMnMDYuMCJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.4947938363363!2d78.38466657493596!3d17.43603368345974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688eb5c5326848!2sHyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1709400000000!5m2!1sen!2sin" 
                 width="100%" 
-                height="300" 
+                height="400" 
                 style="border:0;" 
                 allowfullscreen="" 
                 loading="lazy">
             </iframe>
         </div>
+
         <section class="faq-section">
-        <h2 class="faq-header">Frequently Asked Questions</h2>
-        
-        <details class="faq-item">
-            <summary>How is the crime data collected?</summary>
-            <p>Our data is aggregated from public government records, verified news sources, and user-submitted reports that have been vetted by our administration team to ensure accuracy.</p>
-        </details>
-
-        <details class="faq-item">
-            <summary>Can I report a crime directly through this website?</summary>
-            <p>No. This platform is for analysis and awareness only. If you are witnessing a crime or an emergency, please dial 100 or contact your local police station immediately.</p>
-        </details>
-
-        <details class="faq-item">
-            <summary>How often is the dashboard updated?</summary>
-            <p>The admin dashboard and public charts are updated in real-time as soon as new data is verified and entered into our system.</p>
-        </details>
-
-        <details class="faq-item">
-            <summary>Is my personal information safe when I submit feedback?</summary>
-            <p>Yes. We use secure authentication and database protocols (Firebase) to ensure your data is encrypted and only accessible by authorized administrators.</p>
-        </details>
-    </section>
-
-    <section class="feedback-section">
-        <div class="feedback-container">
-            <h2>We Value Your Feedback</h2>
-            <p>Help us improve our analysis and platform. Your suggestions matter.</p>
-            
-            <form class="feedback-form" onsubmit="submitFeedback(event)">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="fb_name" required placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="fb_email" required placeholder="Enter your email">
-                </div>
-                <div class="form-group">
-                    <label>Suggestion or Feedback</label>
-                    <textarea id="fb_message" rows="4" required placeholder="What can we do better?"></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Submit Feedback</button>
-            </form>
-        </div>
-    </section>
+            <h2 class="faq-header">Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>How is the crime data collected?</summary>
+                <p>Our data is aggregated from public government records, verified news sources, and user-submitted reports that have been vetted by our administration team to ensure accuracy.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Can I report a crime directly through this website?</summary>
+                <p>No. This platform is for analysis and awareness only. If you are witnessing a crime or an emergency, please dial 100 or contact your local police station immediately.</p>
+            </details>
+            <details class="faq-item">
+                <summary>How often is the dashboard updated?</summary>
+                <p>The admin dashboard and public charts are updated in real-time as soon as new data is verified and entered into our system.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Is my personal information safe?</summary>
+                <p>Yes. We use secure authentication and database protocols (Firebase) to ensure your data is encrypted and only accessible by authorized administrators.</p>
+            </details>
+        </section>
     </main>
-
+    
     <footer>
         © 2025 Crime Rate Analysis & Public Safety
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script type="module">
-    import { auth, signOut, onAuthStateChanged, db, collection, addDoc, Timestamp, getDoc, doc } from './firebase.js';
+    <script type="module">
+        import { auth, signOut, onAuthStateChanged, db, collection, addDoc, Timestamp, getDoc, doc } from './firebase.js';
 
-    // Initialize EmailJS
-    (function () { emailjs.init("dTsUtOilfwZS1QsCN"); })();
+        // Initialize EmailJS
+        (function () { emailjs.init("dTsUtOilfwZS1QsCN"); })();
+        const adminEmail = "gudipatisrihari7@gmail.com"; 
 
-    const adminEmail = "gudipatisrihari7@gmail.com"; 
+        // Handle Auth
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById("loginBtn");
+            const signupBtn = document.getElementById("signupBtn");
+            const logoutBtn = document.getElementById("logoutBtn");
+            const userDash = document.getElementById("navUserDashboard");
+            const adminDash = document.getElementById("adminDashboardLink");
 
-    // Handle Auth State (Login/Logout/Dashboard links)
-    onAuthStateChanged(auth, async (user) => {
-        const loginBtn = document.getElementById("loginBtn");
-        const signupBtn = document.getElementById("signupBtn");
-        const logoutBtn = document.getElementById("logoutBtn");
-        const userDash = document.getElementById("navUserDashboard");
-        const adminDash = document.getElementById("adminDashboardLink");
-
-        if (!user) {
-            loginBtn.style.display = "inline-block";
-            signupBtn.style.display = "inline-block";
-            logoutBtn.style.display = "none";
-            if(userDash) userDash.style.display = "none";
-            if(adminDash) adminDash.style.display = "none";
-        } else {
-            loginBtn.style.display = "none";
-            signupBtn.style.display = "none";
-            logoutBtn.style.display = "inline-block";
-            
-            // Admin Check
-            if (user.email && user.email.toLowerCase() === adminEmail.toLowerCase()) {
-                if(adminDash) adminDash.style.display = "inline-block";
-                return; 
-            }
-            // DB Role Check
-            try {
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists() && snap.data().role === "admin") {
+            if (!user) {
+                loginBtn.style.display = "inline-block";
+                signupBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
+                if(userDash) userDash.style.display = "none";
+                if(adminDash) adminDash.style.display = "none";
+            } else {
+                loginBtn.style.display = "none";
+                signupBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+                
+                if (user.email && user.email.toLowerCase() === adminEmail.toLowerCase()) {
                     if(adminDash) adminDash.style.display = "inline-block";
-                } else {
-                    if(userDash) userDash.style.display = "inline-block";
+                    return; 
                 }
-            } catch(e) { console.error(e); }
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists() && snap.data().role === "admin") {
+                        if(adminDash) adminDash.style.display = "inline-block";
+                    } else {
+                        if(userDash) userDash.style.display = "inline-block";
+                    }
+                } catch(e) { console.error(e); }
+            }
+        });
+
+        window.logout = async () => {
+            await signOut(auth);
+            localStorage.clear();
+            window.location.href = "index.html";
+        };
+
+        window.submitForm = async (event) => {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const subject = document.getElementById("subject").value;
+            const message = document.getElementById("message").value;
+            
+            const btn = event.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, "contact_messages"), {
+                    name, email, subject, message,
+                    createdAt: Timestamp.now(),
+                    status: "unread"
+                });
+                const templateParams = { name, email, subject, message };
+                await emailjs.send("service_0s55cg9", "template_2sif9ec", templateParams);
+
+                alert("✅ Message sent successfully!"); 
+                event.target.reset();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("❌ Failed to send. Please try again.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
-    });
-
-    window.logout = async () => {
-        await signOut(auth);
-        localStorage.clear();
-        window.location.href = "index.html";
-    };
-
-    // --- SUBMIT FORM TO FIREBASE ---
-    window.submitForm = async (event) => {
-        event.preventDefault();
-        
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const subject = document.getElementById("subject").value;
-        const message = document.getElementById("message").value;
-        
-        const btn = event.target.querySelector('button');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = 'Sending...';
-        btn.disabled = true;
-
-        try {
-            // 1. Save to Firestore
-            await addDoc(collection(db, "contact_messages"), {
-                name: name,
-                email: email,
-                subject: subject,
-                message: message,
-                createdAt: Timestamp.now(),
-                status: "unread"
-            });
-
-            // 2. Send Email (Optional)
-            const templateParams = { name, email, subject, message };
-            await emailjs.send("service_0s55cg9", "template_2sif9ec", templateParams);
-
-            alert("✅ Message sent and saved successfully!"); 
-            event.target.reset();
-
-        } catch (error) {
-            console.error("Error:", error);
-            alert("❌ Failed to send. Please try again.");
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-    // ... (Keep existing imports and auth logic) ...
-
-    // --- NEW: SUBMIT FEEDBACK FUNCTION ---
-    window.submitFeedback = async (event) => {
-        event.preventDefault();
-        
-        const name = document.getElementById("fb_name").value;
-        const email = document.getElementById("fb_email").value;
-        const message = document.getElementById("fb_message").value;
-        
-        const btn = event.target.querySelector('button');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = 'Sending...';
-        btn.disabled = true;
-
-        try {
-            // Save to a NEW collection called 'public_feedback'
-            await addDoc(collection(db, "public_feedback"), {
-                name: name,
-                email: email,
-                feedback: message,
-                createdAt: Timestamp.now(),
-                isReviewed: false
-            });
-
-            alert("✅ Thank you! Your feedback has been received."); 
-            event.target.reset();
-
-        } catch (error) {
-            console.error("Error:", error);
-            alert("❌ Failed to send feedback.");
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
