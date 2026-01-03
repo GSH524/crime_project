@@ -1,77 +1,24 @@
 import data from './data.js';
-import { db, collection, getDocs, query, orderBy } from './firebase.js'; // Import Firebase
+import { db, collection, getDocs, query, orderBy } from './firebase.js'; 
 
-// --- Auth Check ---
+// --- Initialization ---
 window.onload = () => {
-    // You can uncomment auth check if needed
     initDashboard();
 };
 
 // --- State Variables ---
 let chartInstances = {};
-let currentData = [...data];
+let currentData = [...data]; // This holds filtered data
+// Note: 'data' variable holds the FULL original dataset
 
-// --- Initialization ---
 function initDashboard() {
     populateFilters();
     updateDashboard();
-    loadMessages(); // <--- NEW: Load the contact messages
+    loadMessages(); 
     loadFeedback();
 }
 
-// --- NEW: FETCH MESSAGES FROM FIREBASE ---
-window.loadMessages = async function() {
-    const tableBody = document.getElementById("messagesTableBody");
-    tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>Loading messages...</td></tr>";
-
-    try {
-        // Query 'contact_messages' collection, sorted by date
-        const q = query(collection(db, "contact_messages"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        tableBody.innerHTML = ""; // Clear loading text
-
-        if (querySnapshot.empty) {
-            tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>No inquiries found.</td></tr>";
-            return;
-        }
-
-        querySnapshot.forEach((doc) => {
-            const msg = doc.data();
-            
-            // Format Timestamp
-            let dateStr = "N/A";
-            if (msg.createdAt) {
-                // Check if it's a Firebase Timestamp or regular date
-                const dateObj = msg.createdAt.toDate ? msg.createdAt.toDate() : new Date(msg.createdAt);
-                dateStr = dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            }
-
-            const row = `
-                <tr>
-                    <td style="white-space:nowrap; color:#64748b; font-size:0.9em;">${dateStr}</td>
-                    <td style="font-weight:500;">${msg.name}</td>
-                    <td>${msg.email}</td>
-                    <td><span class="badge" style="background:${getSubjectColor(msg.subject)}">${msg.subject}</span></td>
-                    <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${msg.message}">${msg.message}</td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-
-    } catch (error) {
-        console.error("Error fetching messages:", error);
-        tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Error loading data. Check console.</td></tr>";
-    }
-}
-
-function getSubjectColor(subject) {
-    if(subject === 'Data Discrepancy') return '#fee2e2; color:#dc2626;';
-    if(subject === 'Technical Support') return '#e0f2fe; color:#0284c7;';
-    return '#f1f5f9; color:#475569;';
-}
-
-// --- EXISTING DASHBOARD LOGIC (Keep exactly as you had it) ---
+// --- CORE DASHBOARD LOGIC ---
 
 function populateFilters() {
     const years = [...new Set(data.map(d => Math.floor(d.year)))].sort();
@@ -82,7 +29,6 @@ function populateFilters() {
     const stateSelect = document.getElementById('stateFilter');
     const typeSelect = document.getElementById('crimeTypeFilter');
 
-    // Helper to append options (prevents duplicates if run twice)
     if(yearSelect.options.length === 1) {
         years.forEach(y => {
             let opt = document.createElement('option');
@@ -104,6 +50,7 @@ window.applyFilters = function() {
     const stateVal = document.getElementById('stateFilter').value;
     const typeVal = document.getElementById('crimeTypeFilter').value;
 
+    // We filter 'data' into 'currentData'
     currentData = data.filter(item => {
         return (yearVal === 'all' || Math.floor(item.year) == yearVal) &&
                (stateVal === 'all' || item.state === stateVal) &&
@@ -133,16 +80,28 @@ function updateDashboard() {
     renderCharts();
 }
 
+// --- UPDATED FUNCTION FOR TOTAL CRIMES FIX ---
 function updateKPIs() {
-    const total = currentData.length;
+    // 1. GRAND TOTAL: Uses 'data' (Original full list). 
+    // This ensures "Total Crimes" NEVER decreases when filtering.
+    const grandTotal = data.length; 
+
+    // 2. FILTERED TOTAL: Uses 'currentData' (Filtered list).
+    // This ensures Percentages and Averages are accurate for the selected view.
+    const filteredTotal = currentData.length;
+
     const solved = currentData.filter(d => d.case_status === 'closed').length;
-    const rate = total > 0 ? Math.round((solved / total) * 100) : 0;
+    const rate = filteredTotal > 0 ? Math.round((solved / filteredTotal) * 100) : 0;
+    
     const responses = currentData.map(d => d.response_time_minutes).filter(t => !isNaN(t));
     const avgResp = responses.length > 0 ? Math.round(responses.reduce((a, b) => a + b, 0) / responses.length) : 0;
+    
     const highSev = currentData.filter(d => d.crime_severity_level === 'high').length;
 
+    // Update Elements
     const totalEl = document.getElementById("totalCrimes");
-    if(totalEl) animateValue("totalCrimes", parseInt(totalEl.innerText), total, 500);
+    // Pass grandTotal to the animation logic
+    if(totalEl) animateValue("totalCrimes", parseInt(totalEl.innerText), grandTotal, 500);
     
     document.getElementById("solvedRate").innerText = rate + "%";
     document.getElementById("avgResponse").innerText = avgResp + " min";
@@ -150,6 +109,7 @@ function updateKPIs() {
 }
 
 function renderCharts() {
+    // Charts use currentData so they reflect the filters visually
     const typeCounts = {};
     currentData.forEach(d => { typeCounts[d.crime_type] = (typeCounts[d.crime_type] || 0) + 1; });
 
@@ -166,7 +126,7 @@ function renderCharts() {
     if (chartInstances.status) chartInstances.status.destroy();
     if (chartInstances.state) chartInstances.state.destroy();
 
-    // Chart configs...
+    // Chart configs
     chartInstances.type = new Chart(document.getElementById('crimeTypeChart'), {
         type: 'bar',
         data: {
@@ -197,28 +157,82 @@ function renderCharts() {
 
 function animateValue(id, start, end, duration) {
     if (start === end) return;
+    // Basic check to avoid NaN issues if element is empty initially
+    if (isNaN(start)) start = 0;
+    
     const range = end - start;
     let current = start;
     const increment = end > start ? 1 : -1;
     const stepTime = Math.abs(Math.floor(duration / range));
+    
     const obj = document.getElementById(id);
     if(!obj) return;
+    
     const timer = setInterval(function() {
         current += increment;
         obj.innerText = current;
         if (current == end) clearInterval(timer);
-    }, stepTime);
+    }, stepTime || 10); // Default 10ms if stepTime is 0
 }
+
+// --- FIREBASE DATA FETCHING ---
+
+window.loadMessages = async function() {
+    const tableBody = document.getElementById("messagesTableBody");
+    tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>Loading messages...</td></tr>";
+
+    try {
+        const q = query(collection(db, "contact_messages"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        tableBody.innerHTML = ""; 
+
+        if (querySnapshot.empty) {
+            tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>No inquiries found.</td></tr>";
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const msg = doc.data();
+            let dateStr = "N/A";
+            if (msg.createdAt) {
+                const dateObj = msg.createdAt.toDate ? msg.createdAt.toDate() : new Date(msg.createdAt);
+                dateStr = dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+
+            const row = `
+                <tr>
+                    <td style="white-space:nowrap; color:#64748b; font-size:0.9em;">${dateStr}</td>
+                    <td style="font-weight:500;">${msg.name}</td>
+                    <td>${msg.email}</td>
+                    <td><span class="badge" style="background:${getSubjectColor(msg.subject)}">${msg.subject}</span></td>
+                    <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${msg.message}">${msg.message}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+        tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Error loading data. Check console.</td></tr>";
+    }
+}
+
+function getSubjectColor(subject) {
+    if(subject === 'Data Discrepancy') return '#fee2e2; color:#dc2626;';
+    if(subject === 'Technical Support') return '#e0f2fe; color:#0284c7;';
+    return '#f1f5f9; color:#475569;';
+}
+
 window.loadFeedback = async function() {
     const tableBody = document.getElementById("feedbackTableBody");
     tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:20px;'>Loading feedback...</td></tr>";
 
     try {
-        // Query 'public_feedback' collection
         const q = query(collection(db, "public_feedback"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
 
-        tableBody.innerHTML = ""; // Clear loading text
+        tableBody.innerHTML = ""; 
 
         if (querySnapshot.empty) {
             tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:20px;'>No feedback received yet.</td></tr>";
@@ -227,8 +241,6 @@ window.loadFeedback = async function() {
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-
-            // Format Date
             let dateStr = "N/A";
             if (data.createdAt) {
                 const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
