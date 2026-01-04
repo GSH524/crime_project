@@ -1,15 +1,12 @@
 import data from './data.js';
 import { db, collection, getDocs, query, orderBy } from './firebase.js'; 
 
-// --- Initialization ---
 window.onload = () => {
     initDashboard();
 };
 
-// --- State Variables ---
 let chartInstances = {};
-let currentData = [...data]; // This holds filtered data
-// Note: 'data' variable holds the FULL original dataset
+let currentData = [...data];
 
 function initDashboard() {
     populateFilters();
@@ -17,8 +14,6 @@ function initDashboard() {
     loadMessages(); 
     loadFeedback();
 }
-
-// --- CORE DASHBOARD LOGIC ---
 
 function populateFilters() {
     const years = [...new Set(data.map(d => Math.floor(d.year)))].sort();
@@ -50,7 +45,6 @@ window.applyFilters = function() {
     const stateVal = document.getElementById('stateFilter').value;
     const typeVal = document.getElementById('crimeTypeFilter').value;
 
-    // We filter 'data' into 'currentData'
     currentData = data.filter(item => {
         return (yearVal === 'all' || Math.floor(item.year) == yearVal) &&
                (stateVal === 'all' || item.state === stateVal) &&
@@ -80,28 +74,21 @@ function updateDashboard() {
     renderCharts();
 }
 
-// --- UPDATED FUNCTION FOR TOTAL CRIMES FIX ---
 function updateKPIs() {
-    // 1. GRAND TOTAL: Uses 'data' (Original full list). 
-    // This ensures "Total Crimes" NEVER decreases when filtering.
-    const grandTotal = data.length; 
-
-    // 2. FILTERED TOTAL: Uses 'currentData' (Filtered list).
-    // This ensures Percentages and Averages are accurate for the selected view.
-    const filteredTotal = currentData.length;
+    const total = currentData.length;
 
     const solved = currentData.filter(d => d.case_status === 'closed').length;
-    const rate = filteredTotal > 0 ? Math.round((solved / filteredTotal) * 100) : 0;
+    const rate = total > 0 ? Math.round((solved / total) * 100) : 0;
     
     const responses = currentData.map(d => d.response_time_minutes).filter(t => !isNaN(t));
     const avgResp = responses.length > 0 ? Math.round(responses.reduce((a, b) => a + b, 0) / responses.length) : 0;
     
     const highSev = currentData.filter(d => d.crime_severity_level === 'high').length;
 
-    // Update Elements
     const totalEl = document.getElementById("totalCrimes");
-    // Pass grandTotal to the animation logic
-    if(totalEl) animateValue("totalCrimes", parseInt(totalEl.innerText), grandTotal, 500);
+    const currentTotalDisplayed = parseInt(totalEl.innerText) || 0;
+    
+    if(totalEl) animateValue("totalCrimes", currentTotalDisplayed, total, 300);
     
     document.getElementById("solvedRate").innerText = rate + "%";
     document.getElementById("avgResponse").innerText = avgResp + " min";
@@ -109,7 +96,6 @@ function updateKPIs() {
 }
 
 function renderCharts() {
-    // Charts use currentData so they reflect the filters visually
     const typeCounts = {};
     currentData.forEach(d => { typeCounts[d.crime_type] = (typeCounts[d.crime_type] || 0) + 1; });
 
@@ -126,7 +112,6 @@ function renderCharts() {
     if (chartInstances.status) chartInstances.status.destroy();
     if (chartInstances.state) chartInstances.state.destroy();
 
-    // Chart configs
     chartInstances.type = new Chart(document.getElementById('crimeTypeChart'), {
         type: 'bar',
         data: {
@@ -156,26 +141,30 @@ function renderCharts() {
 }
 
 function animateValue(id, start, end, duration) {
-    if (start === end) return;
-    // Basic check to avoid NaN issues if element is empty initially
-    if (isNaN(start)) start = 0;
-    
-    const range = end - start;
-    let current = start;
-    const increment = end > start ? 1 : -1;
-    const stepTime = Math.abs(Math.floor(duration / range));
-    
     const obj = document.getElementById(id);
-    if(!obj) return;
+    if (!obj) return;
     
-    const timer = setInterval(function() {
-        current += increment;
-        obj.innerText = current;
-        if (current == end) clearInterval(timer);
-    }, stepTime || 10); // Default 10ms if stepTime is 0
-}
+    if (start === end) return;
 
-// --- FIREBASE DATA FETCHING ---
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        const value = Math.floor(progress * (end - start) + start);
+        obj.innerText = value;
+        
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            obj.innerText = end; 
+        }
+    }
+    
+    requestAnimationFrame(animation);
+}
 
 window.loadMessages = async function() {
     const tableBody = document.getElementById("messagesTableBody");
