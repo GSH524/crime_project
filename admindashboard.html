@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Crime Analytics</title>
     <link rel="shortcut icon" href="crime-investigation.png" type="image/x-icon">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <link rel="stylesheet" href="index.css"> 
+
+    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="admindashboard.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { padding-top: 0; }
-        
+        body {
+            padding-top: 0;
+        }
+
         .dashboard-toggle-btn {
             background: none;
             border: none;
@@ -31,29 +34,35 @@
         }
 
         @media (max-width: 992px) {
-            .dashboard-toggle-btn { display: block; }
+            .dashboard-toggle-btn {
+                display: block;
+            }
         }
 
         .sidebar {
-            z-index: 900; 
+            z-index: 900;
             top: 70px;
             height: calc(100vh - 70px);
         }
 
-        .main-content { margin-top: 70px; }
+        .main-content {
+            margin-top: 70px;
+        }
     </style>
 </head>
+
 <body>
 
     <nav style="position: fixed; top: 0; width: 100%; z-index: 1000;">
-        
+
         <button class="dashboard-toggle-btn" onclick="toggleDashboardSidebar()">
             <i class="bi bi-list"></i>
         </button>
 
         <div class="logo">
             <img src="logo4.png" alt="Logo">
-            <span>Crime Analytics <span style="font-size:0.7em; background:#f59e0b; color:#0f172a; padding:2px 6px; border-radius:4px; margin-left:5px;">ADMIN</span></span>
+            <span>Crime Analytics <span
+                    style="font-size:0.7em; background:#f59e0b; color:#0f172a; padding:2px 6px; border-radius:4px; margin-left:5px;">ADMIN</span></span>
         </div>
 
         <button class="hamburger" id="hamburgerBtn">
@@ -66,9 +75,9 @@
             <a href="index.html">Home</a>
             <a href="index.html#about">About</a>
             <a href="index.html#contact">Contact</a>
-            
+
             <a href="admindashboard.html" class="active" style="color: #f59e0b;">Dashboard</a>
-            
+
             <button id="logoutBtn" onclick="logout()" style="display:inline-block;">Logout</button>
         </div>
     </nav>
@@ -76,7 +85,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="filter-section">
             <h3><i class="bi bi-funnel"></i> Filters</h3>
-            
+
             <div class="filter-group">
                 <label>Year</label>
                 <select id="yearFilter" onchange="applyFilters()">
@@ -116,7 +125,7 @@
                     <p>Total Crimes</p>
                 </div>
             </div>
-            
+
             <div class="kpi-card">
                 <div class="icon-box green"><i class="bi bi-check-circle"></i></div>
                 <div>
@@ -142,26 +151,94 @@
             </div>
         </div>
 
-        <div class="charts-row">
+        <style>
+            .charts-grid-3 {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+
+            .chart-container {
+                height: 300px;
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .chart-header h4 {
+                font-size: 0.95rem;
+                color: #64748b;
+                margin-bottom: 10px;
+            }
+
+            .canvas-wrapper {
+                position: relative;
+                height: 240px;
+                width: 100%;
+            }
+        </style>
+
+        <div class="charts-grid-3">
             <div class="chart-container">
-                <div class="chart-header"><h4>Crime Distribution by Type</h4></div>
+                <div class="chart-header">
+                    <h4>1. Crime Distribution by Type</h4>
+                </div>
                 <div class="canvas-wrapper"><canvas id="crimeTypeChart"></canvas></div>
             </div>
             <div class="chart-container">
-                <div class="chart-header"><h4>Case Status Overview</h4></div>
+                <div class="chart-header">
+                    <h4>2. Case Status Overview</h4>
+                </div>
                 <div class="canvas-wrapper"><canvas id="statusChart"></canvas></div>
             </div>
-        </div>
-
-        <div class="charts-row">
-            <div class="chart-container full-width">
-                <div class="chart-header"><h4>Crime Trends by State</h4></div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>3. Crime Trends by State</h4>
+                </div>
                 <div class="canvas-wrapper"><canvas id="stateChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>4. Severity Level Analysis</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="severityChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>5. Yearly Crime Volume</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="yearChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>6. Avg Response Time by Crime</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="responseChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>7. Solved vs Unsolved by Year</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="solvedYearChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>8. Top 5 High-Risk States</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="riskStateChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h4>9. Case Complexity Matrix</h4>
+                </div>
+                <div class="canvas-wrapper"><canvas id="radarChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
-            <div class="chart-container full-width">
+            <div class="chart-container full-width" style="height: auto;">
                 <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h4>Recent Contact Inquiries</h4>
                     <button onclick="loadMessages()" style="font-size:0.8rem; padding:5px 10px; cursor:pointer;">
@@ -186,7 +263,7 @@
         </div>
 
         <div class="charts-row" style="margin-top: 30px;">
-            <div class="chart-container full-width">
+            <div class="chart-container full-width" style="height: auto;">
                 <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h4 style="color: var(--accent);">Public Feedback & Suggestions</h4>
                     <button onclick="loadFeedback()" style="font-size:0.8rem; padding:5px 10px; cursor:pointer;">
@@ -224,9 +301,10 @@
         }
 
         // Toggle Navbar Menu
-        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+        document.getElementById('hamburgerBtn').addEventListener('click', function () {
             document.getElementById('navLinks').classList.toggle('active');
         });
     </script>
 </body>
+
 </html>
