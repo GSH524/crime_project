@@ -1,249 +1,308 @@
-import data from './data.js';
-import { auth, onAuthStateChanged } from './firebase.js'; 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+    getFirestore, getDoc, doc, collection, addDoc, Timestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-window.onload = () => {
-    checkAuth();
-    initDashboard();
+// ✅ IMPORT YOUR LOCAL DATA FILE
+import rawData from './data.js';
+
+// --- 1. FIREBASE CONFIG ---
+const firebaseConfig = {
+    apiKey: "AIzaSyA3gQMnJh0L8Bc6CNRJ_oTh6xqabVP2-P4",
+    authDomain: "crime-rate-anaylsis.firebaseapp.com",
+    projectId: "crime-rate-anaylsis",
+    storageBucket: "crime-rate-anaylsis.firebasestorage.app",
+    messagingSenderId: "640438558864",
+    appId: "1:640438558864:web:42745954d83ea46cecf815"
 };
 
-let chartInstances = {};
-let currentData = [...data];
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-function checkAuth() {
-    onAuthStateChanged(auth, (user) => {
+// Global Variables
+let userSpecificData = [];
+let charts = {};
+let currentUserState = "";
+
+// --- 2. AUTH & USER DATA ---
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            // 1. Get User Details from Firestore
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+
+                // Update Name on Dashboard
+                document.getElementById("userNameDisplay").innerText = userData.firstName || "User";
+
+                // 2. Get User State & Normalize it (Trim spaces + Lowercase)
+                if (userData.state) {
+                    currentUserState = userData.state.toLowerCase().trim();
+                    document.getElementById("dashboardTitle").innerText = `DASHBOARD – ${currentUserState.toUpperCase()}`;
+
+                    // 3. Load & Filter Data based on this state
+                    processCrimeData(user.uid);
+                } else {
+                    alert("State not found in your profile. Please update your profile.");
+                }
+            } else {
+                console.error("User document does not exist in Firestore.");
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+
+        // 4. Log Activity
+        logActivity(user.uid, "Login", "User accessed dashboard");
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
+// --- 3. PROCESS DATA (Replaces Fetch) ---
+function processCrimeData(uid) {
+    if (!currentUserState) return;
+
+    // ✅ FILTER LOGIC: Match data.js state with User's state
+    // We convert both to lowercase to ensure 'Telangana' matches 'telangana'
+    userSpecificData = rawData.filter(d =>
+        d.state && d.state.toLowerCase().trim() === currentUserState
+    );
+
+    console.log(`User State: ${currentUserState}`);
+    console.log(`Matched Records: ${userSpecificData.length}`);
+
+    if (userSpecificData.length === 0) {
+        alert(`No records found for ${currentUserState.toUpperCase()}. showing 0 records.`);
+    }
+
+    // Populate Filters based on the filtered data
+    loadFilters(userSpecificData);
+
+    // Render Dashboard
+    updateDashboard(userSpecificData);
+}
+
+// --- 4. FILTER LOGIC ---
+function loadFilters(data) {
+    // Populate Months
+    const uniqueMonths = [...new Set(data.map(d => d.month))].sort((a, b) => a - b);
+    populateFilter("monthFilter", uniqueMonths, true);
+
+    // Populate Years
+    populateFilter("yearFilter", [...new Set(data.map(d => d.year))].sort());
+
+    // Populate Crime Types
+    populateFilter("crimeFilter", [...new Set(data.map(d => d.crime_type))].sort());
+}
+
+function populateFilter(id, values, isMonth = false) {
+    const select = document.getElementById(id);
+    select.innerHTML = select.options[0].outerHTML; // Reset to default option
+
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    values.forEach(val => {
+        const option = document.createElement("option");
+        option.value = val;
+        option.textContent = isMonth ? monthNames[val - 1] : String(val).toUpperCase();
+        select.appendChild(option);
+    });
+}
+
+// Apply Filters Button Logic
+window.applyFilters = function () {
+    const month = document.getElementById("monthFilter").value;
+    const year = document.getElementById("yearFilter").value;
+    const crime = document.getElementById("crimeFilter").value;
+
+    // Start with the state-specific data
+    let filtered = userSpecificData;
+
+    if (month) filtered = filtered.filter(d => d.month == month);
+    if (year) filtered = filtered.filter(d => d.year == year);
+    if (crime) filtered = filtered.filter(d => d.crime_type === crime);
+
+    updateDashboard(filtered);
+};
+
+// --- 5. DASHBOARD UPDATES ---
+function updateDashboard(data) {
+    // KPI Updates
+    document.getElementById("totalCrimes").innerText = data.length.toLocaleString();
+
+    const closedCases = data.filter(d => d.case_status === "closed").length;
+    document.getElementById("solvedCount").innerText = closedCases.toLocaleString();
+
+    // Avg Response Time
+    const totalResp = data.reduce((acc, curr) => acc + (curr.response_time_minutes || 0), 0);
+    const avgResp = data.length ? Math.round(totalResp / data.length) : 0;
+    document.getElementById("avgResponse").innerText = avgResp + " min";
+
+    drawCharts(data);
+}
+
+// --- 6. CHART DRAWING ---
+function drawCharts(data) {
+    // Destroy old charts if they exist
+    Object.values(charts).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#ffffff' } }
+        },
+        scales: {
+            x: { ticks: { color: '#cbd5e1' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#cbd5e1' }, grid: { color: '#334155' } }
+        }
+    };
+
+    // 1. Pie: Crime Types
+    const typeCounts = countBy(data, "crime_type");
+    const sortedTypes = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    charts.pie = new Chart(document.getElementById("pieChart"), {
+        type: "doughnut",
+        data: {
+            labels: sortedTypes.map(t => t[0].toUpperCase()),
+            datasets: [{
+                data: sortedTypes.map(t => t[1]),
+                backgroundColor: ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6"],
+                borderWidth: 0
+            }]
+        },
+        options: { ...commonOptions, scales: {} }
+    });
+    // --- 2. AUTH & USER DATA ---
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            document.getElementById('userNameDisplay').innerText = user.email.split('@')[0];
+            // Proceed with loading dashboard
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                // ... rest of your dashboard loading logic ...
+            } catch (error) {
+                console.error(error);
+            }
         } else {
-            // Optional: Redirect if not logged in
-            // window.location.href = "login.html";
+            // Only redirect if explicitly NOT logged in
+            // Store current URL to redirect back after login if needed
+            localStorage.setItem("redirectAfterLogin", window.location.href);
+            window.location.href = "login.html";
         }
     });
-}
 
-function initDashboard() {
-    populateFilters();
-    updateDashboard();
-}
-
-function populateFilters() {
-    const years = [...new Set(data.map(d => Math.floor(d.year)))].sort();
-    const types = [...new Set(data.map(d => d.crime_type))].sort();
-    // Simulate Months (assuming data might not have month field, creating 1-12)
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    const yearSelect = document.getElementById('yearFilter');
-    const typeSelect = document.getElementById('crimeFilter');
-    const monthSelect = document.getElementById('monthFilter');
-
-    if(yearSelect.options.length === 1) {
-        years.forEach(y => {
-            const opt = document.createElement('option');
-            opt.value = y; opt.innerText = y; yearSelect.appendChild(opt);
-        });
-        types.forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t; opt.innerText = t; typeSelect.appendChild(opt);
-        });
-        months.forEach((m, index) => {
-            const opt = document.createElement('option');
-            opt.value = index + 1; opt.innerText = m; monthSelect.appendChild(opt);
-        });
-    }
-}
-
-window.applyFilters = function() {
-    const yearVal = document.getElementById('yearFilter').value;
-    const typeVal = document.getElementById('crimeFilter').value;
-    const monthVal = document.getElementById('monthFilter').value;
-
-    currentData = data.filter(item => {
-        // Mocking month extraction if date string exists, else random or ignore
-        const itemDate = new Date(item.date || item.createdAt || new Date()); 
-        const itemMonth = itemDate.getMonth() + 1;
-
-        return (yearVal === "" || Math.floor(item.year) == yearVal) &&
-               (typeVal === "" || item.crime_type === typeVal) &&
-               (monthVal === "" || itemMonth == monthVal);
-    });
-
-    updateDashboard();
-}
-
-window.logout = function() {
-    auth.signOut().then(() => {
-        window.location.href = "login.html";
-    });
-}
-
-function updateDashboard() {
-    updateKPIs();
-    renderCharts();
-}
-
-function updateKPIs() {
-    const total = currentData.length;
-    const solved = currentData.filter(d => d.case_status === 'closed').length;
-    
-    const responses = currentData.map(d => d.response_time_minutes).filter(t => !isNaN(t));
-    const avg = responses.length > 0 ? Math.round(responses.reduce((a,b)=>a+b,0)/responses.length) : 0;
-
-    animateValue("totalCrimes", total);
-    animateValue("solvedCount", solved);
-    document.getElementById("avgResponse").innerText = avg + " min";
-}
-
-function renderCharts() {
-    // Destroy existing
-    Object.keys(chartInstances).forEach(key => {
-        if(chartInstances[key]) chartInstances[key].destroy();
-    });
-
-    // 1. Aggregations
-    const countByYear = {};
-    const countByType = {};
-    const countByStatus = { 'open': 0, 'closed': 0 };
-    const countBySeverity = { 'high': 0, 'medium': 0, 'low': 0 };
-    const countByDay = { 'Sun':0, 'Mon':0, 'Tue':0, 'Wed':0, 'Thu':0, 'Fri':0, 'Sat':0 };
-    const countByMonth = new Array(12).fill(0);
-    const countByArea = {};
-    const responseByType = {};
-
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    currentData.forEach(d => {
-        // Year
-        countByYear[d.year] = (countByYear[d.year] || 0) + 1;
-        
-        // Type
-        countByType[d.crime_type] = (countByType[d.crime_type] || 0) + 1;
-        
-        // Status
-        const status = d.case_status ? d.case_status.toLowerCase() : 'open';
-        if(countByStatus[status] !== undefined) countByStatus[status]++;
-
-        // Severity
-        const sev = d.crime_severity_level ? d.crime_severity_level.toLowerCase() : 'low';
-        if(countBySeverity[sev] !== undefined) countBySeverity[sev]++;
-
-        // Date derived (Day/Month)
-        const dateObj = new Date(d.date || d.year + "-01-01"); // Fallback
-        countByDay[days[dateObj.getDay()]]++;
-        countByMonth[dateObj.getMonth()]++;
-
-        // Area
-        countByArea[d.state] = (countByArea[d.state] || 0) + 1; // Using state as area for demo
-
-        // Response Time
-        if(!responseByType[d.crime_type]) responseByType[d.crime_type] = {sum:0, count:0};
-        responseByType[d.crime_type].sum += (d.response_time_minutes || 0);
-        responseByType[d.crime_type].count++;
-    });
-
-    const sortedYears = Object.keys(countByYear).sort();
-    const sortedAreas = Object.entries(countByArea).sort((a,b) => b[1] - a[1]).slice(0, 5);
-    const responseLabels = Object.keys(responseByType);
-    const responseValues = responseLabels.map(k => Math.round(responseByType[k].sum / responseByType[k].count));
-
-    // 2. Chart Configurations
-
-    // Chart 1: Yearly Trend (Line)
-    createChart('trendChart', 'line', sortedYears, sortedYears.map(y => countByYear[y]), 'Crime Trend', '#3b82f6', true);
-
-    // Chart 2: Status (Doughnut)
-    chartInstances.status = new Chart(document.getElementById('statusChart'), {
-        type: 'doughnut',
+    // 2. Line: Trends
+    const yearCounts = countBy(data, "year");
+    charts.line = new Chart(document.getElementById("lineChart"), {
+        type: "line",
         data: {
-            labels: ['Open Cases', 'Closed Cases'],
-            datasets: [{ data: [countByStatus.open, countByStatus.closed], backgroundColor: ['#ef4444', '#10b981'], borderWidth:0 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart 3: Type (Pie)
-    chartInstances.type = new Chart(document.getElementById('typeChart'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(countByType),
-            datasets: [{ data: Object.values(countByType), backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316'], borderWidth:0 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
-    });
-
-    // Chart 4: Severity (Polar Area)
-    chartInstances.severity = new Chart(document.getElementById('severityChart'), {
-        type: 'polarArea',
-        data: {
-            labels: ['High', 'Medium', 'Low'],
-            datasets: [{ data: [countBySeverity.high, countBySeverity.medium, countBySeverity.low], backgroundColor: ['#dc2626', '#f59e0b', '#3b82f6'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { ticks: { display: false } } } }
-    });
-
-    // Chart 5: Day of Week (Bar)
-    createChart('dayChart', 'bar', days, days.map(d => countByDay[d]), 'Incidents', '#8b5cf6');
-
-    // Chart 6: Monthly (Bar)
-    const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    createChart('monthlyChart', 'bar', monthLabels, countByMonth, 'Monthly Volume', '#06b6d4');
-
-    // Chart 7: Top Areas (Horizontal Bar)
-    chartInstances.area = new Chart(document.getElementById('areaChart'), {
-        type: 'bar',
-        data: {
-            labels: sortedAreas.map(i => i[0]),
-            datasets: [{ label: 'Incidents', data: sortedAreas.map(i => i[1]), backgroundColor: '#f59e0b', borderRadius: 4 }]
-        },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart 8: Response Time (Bar)
-    createChart('responseChart', 'bar', responseLabels, responseValues, 'Avg Response (min)', '#10b981');
-
-    // Chart 9: Radar (Safety Metrics)
-    chartInstances.radar = new Chart(document.getElementById('radarChart'), {
-        type: 'radar',
-        data: {
-            labels: ['Volume', 'Severity', 'Unsolved Rate', 'Response Time', 'Frequency'],
+            labels: Object.keys(yearCounts).sort(),
             datasets: [{
-                label: 'Current Metrics',
-                data: [65, 59, 90, 81, 56], // Mocked relative metrics for visual
+                label: "Incidents",
+                data: Object.keys(yearCounts).sort().map(k => yearCounts[k]),
+                borderColor: "#38bdf8",
+                backgroundColor: "rgba(56, 189, 248, 0.2)",
                 fill: true,
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                borderColor: 'rgb(59, 130, 246)',
-                pointBackgroundColor: 'rgb(59, 130, 246)',
+                tension: 0.4
             }]
         },
-        options: { responsive: true, maintainAspectRatio: false, elements: { line: { borderWidth: 3 } } }
+        options: commonOptions
     });
-}
 
-function createChart(id, type, labels, dataArr, label, color, fill=false) {
-    const ctx = document.getElementById(id);
-    if(!ctx) return;
-    
-    chartInstances[id] = new Chart(ctx, {
-        type: type,
+    // 3. Bar: Response Time
+    const respCounts = countBy(data, "response_time_bucket");
+    charts.bar = new Chart(document.getElementById("barChart"), {
+        type: "bar",
         data: {
-            labels: labels,
+            labels: Object.keys(respCounts),
             datasets: [{
-                label: label,
-                data: dataArr,
-                backgroundColor: color,
-                borderColor: color,
-                tension: 0.4,
-                fill: fill,
-                borderRadius: 4
+                label: "Count",
+                data: Object.values(respCounts),
+                backgroundColor: "#10B981"
             }]
+        },
+        options: commonOptions
+    });
+
+    // 4. Stacked: Severity
+    const sevCounts = countBy(data, "crime_severity_level");
+    charts.stacked = new Chart(document.getElementById("stackedBarChart"), {
+        type: "bar",
+        data: {
+            labels: ["Severity"],
+            datasets: [
+                { label: 'High', data: [sevCounts['high'] || 0], backgroundColor: '#EF4444' },
+                { label: 'Medium', data: [sevCounts['medium'] || 0], backgroundColor: '#F59E0B' },
+                { label: 'Low', data: [sevCounts['low'] || 0], backgroundColor: '#10B981' }
+            ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
+            ...commonOptions,
+            indexAxis: 'y',
+            scales: { x: { stacked: true }, y: { stacked: true } }
         }
+    });
+
+    // 5. Cluster: Area Type
+    const areaCounts = countBy(data, "area_type");
+    charts.cluster = new Chart(document.getElementById("clusterBarChart"), {
+        type: "bar",
+        data: {
+            labels: Object.keys(areaCounts),
+            datasets: [{
+                label: "Count",
+                data: Object.values(areaCounts),
+                backgroundColor: "#8B5CF6"
+            }]
+        },
+        options: commonOptions
     });
 }
 
-function animateValue(id, end) {
-    const obj = document.getElementById(id);
-    if(obj) obj.innerText = end;
+function countBy(data, key) {
+    return data.reduce((acc, item) => {
+        const val = item[key];
+        if (val) acc[val] = (acc[val] || 0) + 1;
+        return acc;
+    }, {});
 }
+
+// --- 7. LOGGING ---
+async function logActivity(uid, action, details) {
+    if (!uid) return;
+    try {
+        await addDoc(collection(db, "activity_logs"), {
+            userId: uid,
+            action: action,
+            details: details,
+            timestamp: Timestamp.now()
+        });
+        loadUserActivity(uid);
+    } catch (e) { console.error("Log error", e); }
+}
+
+async function loadUserActivity(uid) {
+    const tableBody = document.getElementById("activityTableBody");
+    // Note: Simple display logic. For production, requires composite index in Firestore.
+    // We simulate a basic display here.
+    try {
+        // Without index, complex queries fail. Simple solution for demo:
+        // Use a simpler query or catch error gracefully.
+        tableBody.innerHTML = "<tr><td colspan='3' class='text-center'>Activity logging active...</td></tr>";
+    } catch (e) { console.log(e); }
+}
+
+// --- 8. LOGOUT ---
+window.logout = async function () {
+    await signOut(auth);
+    localStorage.clear();
+    window.location.href = "login.html";
+};
